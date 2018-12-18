@@ -15,12 +15,12 @@ npm install --save casino-royale-roulette
 ```tsx
 import * as React from 'react'
 
-import MyComponent from 'casino-royale-roulette'
+import Roulette from 'casino-royale-roulette'
 
 class Example extends React.Component {
   render () {
     return (
-      <MyComponent />
+      <Roulette />
     )
   }
 }

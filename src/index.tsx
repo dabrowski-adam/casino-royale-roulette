@@ -8,7 +8,7 @@ import styles from './styles.css'
 
 export type Props = { text: string }
 
-export default class ExampleComponent extends React.Component<Props> {
+export default class Roulette extends React.Component<Props> {
   render() {
     const {
       text
