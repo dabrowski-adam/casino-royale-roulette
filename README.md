@@ -19,8 +19,19 @@ import Roulette from 'casino-royale-roulette'
 
 class Example extends React.Component {
   render () {
+    const props = {
+      player: {
+        money: 1337,
+        achievements: [{}],
+      },
+      update: () => { window.alert('UPDATE'); },
+      close: () => { window.alert('CLOSE'); }
+    }
+
     return (
-      <Roulette />
+      <div>
+        <Roulette {...props} />
+      </div>
     )
   }
 }

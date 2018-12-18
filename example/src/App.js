@@ -10,7 +10,7 @@ export default class App extends Component {
         achievements: [{}],
       },
       update: () => { window.alert('UPDATE'); },
-      close: () => { window.alert('CLOSE'); }
+      close: () => { window.alert('CLOSE'); },
     }
 
     return (
