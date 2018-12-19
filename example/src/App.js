@@ -9,7 +9,7 @@ export default class App extends Component {
         money: 1337,
         achievements: [{}],
       },
-      update: () => { window.alert('UPDATE'); },
+      update: (player) => { window.alert(`UPDATE :: €${player.money}`); },
       close: () => { window.alert('CLOSE'); },
     }
 

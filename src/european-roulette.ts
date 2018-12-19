@@ -23,7 +23,9 @@ export default class EuropeanRoulette implements IRoulette {
     this.fields = [...Array(37).keys()].map(number => ({ number, color: getColor(number) }))
   }
 
-  Bet(_numbers: number[], _money: number) {
-    return 42
+  Bet(numbers: number[], money: number) {
+    const roll = Math.floor(Math.random() * (this.fields.length + 1))
+
+    return numbers.some(n => n === roll) ? money * 35 : 0
   }
 }
