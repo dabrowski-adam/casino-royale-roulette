@@ -6,21 +6,15 @@ import * as React from 'react'
 
 import IRoulette from './roulette'
 import EuropeanRoulette from './european-roulette'
-import AmericanRoulette from './american-roulette';
-// import AmericanRoulette from './american-roulette'
+import AmericanRoulette from './american-roulette'
 
 export type Props = {
   onSpin: (money: number) => void,
   money: number,
 }
 
-type Field = {
-  number: number,
-  color: "RED" | "BLACK",
-}
-
 type State = {
-  selectedNumbers: Field[], // TODO: Make a field type
+  selectedNumbers: number[],
   selectedRoulette: IRoulette,
   simultaneousSpins: number,
 }
@@ -49,6 +43,8 @@ export default class RouletteLayout extends React.Component<Props, State> {
       return <button onClick={this.toggleRoulette}>American Variant</button>
     }
   }
+
+  renderField = (number: number) => <div>{number}</div>
 
   render() {
     return (
