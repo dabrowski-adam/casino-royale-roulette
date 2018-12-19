@@ -1,5 +1,5 @@
 /**
- * @class RouletteLayout
+ * @class Roulette
  */
 
 import * as React from 'react'
@@ -7,6 +7,9 @@ import * as PropTypes from 'prop-types'
 
 import styles from './styles.css'
 import PlayerData from './player-data'
+import IRoulette from './roulette'
+import EuropeanRoulette from './european-roulette'
+// import AmericanRoulette from './american-roulette'
 
 export type Props = {
   player: PlayerData,
@@ -16,14 +19,14 @@ export type Props = {
 
 type State = {
   selectedNumbers: number[], // TODO: Make a field type
-  selectedRoulette: any, // TODO: Make a Roulette type
+  selectedRoulette: IRoulette,
   simultaneousSpins: number,
 }
 
-export default class RouletteLayout extends React.Component<Props, State> {
+export default class Roulette extends React.Component<Props, State> {
   state = {
     selectedNumbers: [],
-    selectedRoulette: {}, // TODO: Add a default Roulette
+    selectedRoulette: new EuropeanRoulette(), // TODO: Add a default Roulette
     simultaneousSpins: 1,
   }
 
