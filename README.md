@@ -24,8 +24,8 @@ class Example extends React.Component {
         money: 1337,
         achievements: [{}],
       },
-      update: () => { window.alert('UPDATE'); },
-      close: () => { window.alert('CLOSE'); }
+      update: (player) => { window.alert(`UPDATE :: €${player.money}`) },
+      close: () => { window.alert('CLOSE') },
     }
 
     return (
