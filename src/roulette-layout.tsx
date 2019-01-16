@@ -38,20 +38,34 @@ export default class RouletteLayout extends React.Component<Props, State> {
     }
   }
 
+  handleSpinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { money } = this.props
+    const { bet } = this.state
+    const simultaneousSpins = Number.parseInt(e.target.value)
+
+    if (simultaneousSpins * bet > money) {
+      this.setState({ simultaneousSpins: Math.floor(money / bet) })
+    } else {
+      this.setState({ simultaneousSpins })
+    }
+
+  }
+
   handleBetChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { money } = this.props
+    const { simultaneousSpins } = this.state
     const bet = Number.parseInt(e.target.value)
 
-    if (bet < money) {
+    if (simultaneousSpins * bet < money) {
       this.setState({ bet })
     } else {
-      this.setState({ bet: money })
+      this.setState({ bet: Math.floor(money / simultaneousSpins) })
     }
   }
 
   handleBet = () => {
     const { money, onSpin } = this.props
-    const { bet, selectedNumbers, selectedRoulette } = this.state
+    const { bet, selectedNumbers, selectedRoulette, simultaneousSpins } = this.state
 
     if (bet > money) {
       window.alert('You do not have enough money.')
@@ -63,8 +77,8 @@ export default class RouletteLayout extends React.Component<Props, State> {
       return
     }
 
-    const result = selectedRoulette.Bet(selectedNumbers, bet) // TODO: Choosing bet amount
-    onSpin(money - bet + result)
+    const result = [...Array(simultaneousSpins).keys()].reduce(total => total + selectedRoulette.Bet(selectedNumbers, bet), 0)
+    onSpin(money - (simultaneousSpins * bet) + result)
   }
 
   toggleRoulette = () => {
@@ -137,12 +151,15 @@ export default class RouletteLayout extends React.Component<Props, State> {
   }
 
   render() {
-    const { selectedRoulette, bet } = this.state
+    const { selectedRoulette, bet, simultaneousSpins } = this.state
 
     return (
       <div>
         {this.renderToggle()}
         {this.renderTrack(selectedRoulette.fields)}
+        <div style={{ fontSize: 12 }}>
+          <input type="number" onChange={this.handleSpinChange} value={simultaneousSpins} /> simultaneous spins
+        </div>
         <input type="number" onChange={this.handleBetChange} value={bet} />
         <button onClick={this.handleBet}>Bet</button>
       </div>
