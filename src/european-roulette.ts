@@ -13,7 +13,7 @@ const isBlack = (number: number): boolean => {
 const getColor = (number: number): ('RED' | 'BLACK' | 'GREEN') => {
   if (number === 0) { return 'GREEN' }
 
-  return isBlack(number) ? 'BLACK' : 'GREEN'
+  return isBlack(number) ? 'BLACK' : 'RED'
 }
 
 export default class EuropeanRoulette implements IRoulette {
@@ -26,6 +26,6 @@ export default class EuropeanRoulette implements IRoulette {
   Bet(numbers: number[], money: number) {
     const roll = Math.floor(Math.random() * (this.fields.length + 1))
 
-    return numbers.some(n => n === roll) ? money * 35 : 0
+    return numbers.some(n => n === roll) ? money * 35 / numbers.length : 0
   }
 }

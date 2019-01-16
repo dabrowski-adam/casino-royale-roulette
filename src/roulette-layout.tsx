@@ -17,24 +17,52 @@ type State = {
   selectedNumbers: number[],
   selectedRoulette: IRoulette,
   simultaneousSpins: number,
+  bet: number,
 }
 
 export default class RouletteLayout extends React.Component<Props, State> {
   state = {
-    selectedNumbers: [0], // TODO: Remove this default
+    selectedNumbers: [],
     selectedRoulette: new EuropeanRoulette(),
     simultaneousSpins: 1,
+    bet: 0,
   }
 
-  handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    this.setState({ selectedNumbers: [Number.parseInt(e.target.value)] })
+  selectField = (field: Field) => {
+    const { selectedNumbers } = this.state
+    const isSelected = selectedNumbers.some(n => n === field.number)
+    if (isSelected) {
+        this.setState({ selectedNumbers: selectedNumbers.filter(n => n !== field.number)})
+    } else {
+        this.setState({ selectedNumbers: [...selectedNumbers, field.number] })
+    }
+  }
+
+  handleBetChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { money } = this.props
+    const bet = Number.parseInt(e.target.value)
+
+    if (bet < money) {
+      this.setState({ bet })
+    } else {
+      this.setState({ bet: money })
+    }
   }
 
   handleBet = () => {
     const { money, onSpin } = this.props
-    const { selectedNumbers, selectedRoulette } = this.state
+    const { bet, selectedNumbers, selectedRoulette } = this.state
 
-    const bet = money * 0.1
+    if (bet > money) {
+      window.alert('You do not have enough money.')
+      return
+    }
+
+    if (selectedNumbers.length === 0) {
+      window.alert(`You haven't selected any fields.`)
+      return
+    }
+
     const result = selectedRoulette.Bet(selectedNumbers, bet) // TODO: Choosing bet amount
     onSpin(money - bet + result)
   }
@@ -42,9 +70,9 @@ export default class RouletteLayout extends React.Component<Props, State> {
   toggleRoulette = () => {
     const { selectedRoulette } = this.state
     if (selectedRoulette instanceof EuropeanRoulette) {
-      this.setState({ selectedRoulette: new AmericanRoulette() })
+      this.setState({ selectedRoulette: new AmericanRoulette(), selectedNumbers: [] })
     } else {
-      this.setState({ selectedRoulette: new EuropeanRoulette() })
+      this.setState({ selectedRoulette: new EuropeanRoulette(), selectedNumbers: [] })
     }
   }
 
@@ -57,23 +85,65 @@ export default class RouletteLayout extends React.Component<Props, State> {
     }
   }
 
-  renderField = (field: Field) =>
-    <option value={field.number} key={field.number}>
-      {field.number}
-    </option>
+  renderField = (field: Field) => {
+    const { selectedNumbers } = this.state
+    const isSelected = selectedNumbers.some(n => n === field.number)
 
-  renderTrack = (fields: Field[]) =>
-    <select onChange={this.handleChange}>
-      {fields.map(field => this.renderField(field))}
-    </select>
+    return (
+      <td onClick={() => this.selectField(field)} style={{ background: field.color, color: 'white', textAlign: 'center' }}>
+        {
+          isSelected
+            ? <div style={{ fontSize: '0.75em' }}>⬤</div>
+            : field.number == -1 ? '00' : field.number
+        }
+      </td>
+    )
+  }
+
+  renderTrack = (fields: Field[]) => {
+    const { selectedRoulette } = this.state
+    if (selectedRoulette instanceof EuropeanRoulette) {
+      return (
+        <table>
+          <tr>
+            {this.renderField(fields[0])}
+          </tr>
+          {[...Array(Math.floor((fields.length - 1) / 3)).keys()].map(n =>
+            <tr key={n}>
+              {this.renderField(fields[n * 3 + 1])}
+              {this.renderField(fields[n * 3 + 2])}
+              {this.renderField(fields[n * 3 + 3])}
+            </tr>
+          )}
+        </table>
+      )
+    } else {
+      return (
+        <table>
+          <tr>
+            {this.renderField(fields[1])}
+            {this.renderField(fields[0])}
+          </tr>
+          {[...Array(Math.floor((fields.length - 2) / 3)).keys()].map(n =>
+            <tr key={n}>
+              {this.renderField(fields[n * 3 + 2])}
+              {this.renderField(fields[n * 3 + 3])}
+              {this.renderField(fields[n * 3 + 4])}
+            </tr>
+          )}
+        </table>
+      )
+    }
+  }
 
   render() {
-    const { selectedRoulette } = this.state
+    const { selectedRoulette, bet } = this.state
 
     return (
       <div>
         {this.renderToggle()}
         {this.renderTrack(selectedRoulette.fields)}
+        <input type="number" onChange={this.handleBetChange} value={bet} />
         <button onClick={this.handleBet}>Bet</button>
       </div>
     )

@@ -13,7 +13,7 @@ const isBlack = (number: number): boolean => {
 const getColor = (number: number): ('RED' | 'BLACK' | 'GREEN') => {
   if (number === 0) { return 'GREEN' }
 
-  return isBlack(number) ? 'BLACK' : 'GREEN'
+  return isBlack(number) ? 'BLACK' : 'RED'
 }
 
 export default class AmericanRoulette implements IRoulette {
@@ -21,12 +21,12 @@ export default class AmericanRoulette implements IRoulette {
 
   constructor() {
     this.fields = [...Array(37).keys()].map(number => ({ number, color: getColor(number) }))
-    this.fields = [{ number: 0, color: 'GREEN' }, ...this.fields] // add 00
+    this.fields = [{ number: -1, color: 'GREEN' }, ...this.fields] // add 00
   }
 
   Bet(numbers: number[], money: number) {
-    const roll = Math.floor(Math.random() * (this.fields.length + 1))
+    const roll = Math.floor(Math.random() * (this.fields.length + 1)) - 1
 
-    return numbers.some(n => n === roll) ? money * 35 : 0
+    return numbers.some(n => n === roll) ? money * 35 / numbers.length : 0
   }
 }
